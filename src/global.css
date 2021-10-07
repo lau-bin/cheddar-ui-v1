@@ -262,7 +262,8 @@ div {
   line-height: 1.5;
 }
 
-.pool-meta.earned, .pool-meta.staked {
+.pool-meta.earned,
+.pool-meta.staked, {
   justify-content: left;
   padding-top: 10px;
 }
@@ -297,10 +298,27 @@ div {
   color      : rgb(6, 55, 103);
 }
 
-.pool-meta.earned.amount div button, .pool-meta.staked.amount div button {
+.pool-meta.earned.amount div button,
+.pool-meta.staked.amount div button,
+#deposit button {
   margin    : 0;
   background: rgb(68, 196, 226);
   color     : white;
+}
+
+#deposit button {
+  font-weight: 700;
+}
+
+#deposit {
+  text-align: center;
+  margin-bottom:  200px;
+}
+
+#deposit p {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .pool-meta.wallet-balance {

@@ -353,6 +353,46 @@ qs('button#harvestBanana').onclick =
     submitForm((event.target as HTMLElement).id, button.form)
   }
 
+qs('#afiPool button.activate').onclick =
+  async function (event) {
+    event.preventDefault()
+
+    let storageDeposit = await contract1.storageDeposit();
+    qs('#afiPool #deposit').style.display = "none";
+    qs('#afiPool #activated').style.display = "block";
+
+  }
+
+qs('#refPool button.activate').onclick =
+  async function (event) {
+    event.preventDefault()
+
+    let storageDeposit = await contract2.storageDeposit();
+    qs('#refPool #deposit').style.display = "none";
+    qs('#refPool #activated').style.display = "block";
+
+  }
+
+qs('#stNEARPool button.activate').onclick =
+  async function (event) {
+    event.preventDefault()
+
+    let storageDeposit = await contract3.storageDeposit();
+    qs('#stNEARPool #deposit').style.display = "none";
+    qs('#stNEARPool #activated').style.display = "block";
+
+  }
+
+qs('#bananaPool button.activate').onclick =
+  async function (event) {
+    event.preventDefault()
+
+    var storageDeposit = await contract4.storageDeposit();
+    qs('#bananaPool #deposit').style.display = "none";
+    qs('#bananaPool #activated').style.display = "block";
+
+  }
+
 //Form submission
 //qs('form#stake').onsubmit =
 async function submitForm(action: string, form: any) {
@@ -970,7 +1010,7 @@ async function refreshRealRewardsLoop() {
       if (real > computed || (real > 0 && computed - real > real / 4)) { //if real is bigger or differ is >25%
         computed = real
       }
-      console.log(computed)
+
       display_cheddar(computed, "afiPool");
     }
   } catch (ex) {
@@ -1022,7 +1062,7 @@ async function refreshRealRewardsLoop2() {
           let advanced2 = yton(real2) - yton(previous_real2)
           let elapsed_ms2 = now2 - previous_timestamp2
           real_rewards_per_day2 = (advanced2 * 60 * 24)
-          //console.log(`advanced:${advanced2} real:${real2} prev-real:${previous_real2} rewards-per-day:${real_rewards_per_day2}  comp:${computed2} real-comp:${real2 - computed2} eslapsed-ms:${elapsed_ms2}`);
+          console.log(`advanced:${advanced2} real:${real2} prev-real:${previous_real2} rewards-per-day:${real_rewards_per_day2}  comp:${computed2} real-comp:${real2 - computed2} eslapsed-ms:${elapsed_ms2}`);
           //console.log(`real-adv:${advanced2}, elapsed_ms:${elapsed_ms2}, real rew x week :${real_rewards_per_day2 * 7}`);
         }
       }
@@ -1105,7 +1145,7 @@ async function refreshRealRewardsLoop3() {
       let timePassed3 = (Date.now()-(unixTimestamp3*1000))/1000
       timeRemaining3 = 61.3 - timePassed3;
       timeRemaining3 = (timeRemaining3 > 0) ? timeRemaining3 : timeRemaining3 + 2
-      console.log(timeRemaining3)
+      //console.log(timeRemaining3)
     }
 
     setTimeout(refreshRealRewardsLoop3, timeRemaining3 * 1000) // every 60 secs
@@ -1203,8 +1243,7 @@ async function refreshRewardsDisplayLoop2() {
         if (staked2 != 0) {
           var rewards2 = (real_rewards_per_day2 * elapsed_ms2 / (1000 * 60 * 60 * 24));
           computed2 = (yton(previous_real2) + rewards2)
-          //console.log(`date_now:${Date.now()}, round_timestamp:${previous_timestamp2}, rewards:${rewards2}, computed:${computed2}, previous_real:${yton(previous_real2)}, real_rewards_per_day2 :${real_rewards_per_day2}, elapsed_ms:${elapsed_ms2}`);
-          //console.log(computed2)
+          console.log(`date_now:${Date.now()}, round_timestamp:${previous_timestamp2}, rewards:${rewards2}, computed:${computed2}, previous_real:${yton(previous_real2)}, real_rewards_per_day2 :${real_rewards_per_day2}, elapsed_ms:${elapsed_ms2}`);
           display_cheddar(computed2, "refPool");
         }
       }
@@ -1285,6 +1324,7 @@ function display_cheddar(cheddar_amount: number, pool: string) {
     case "bananaPool": {
       qsaInnerText("#bananaPool #cheddar-balance", toStringDec(cheddar_amount));
       cheddar_displayed4 = cheddar_amount;
+      break;
     }
     case "afiPool": {
       qsaInnerText("#afiPool #cheddar-balance", toStringDec(cheddar_amount));
@@ -1357,15 +1397,18 @@ async function refreshAccountInfo() {
     //update account & contract stats
     if (wallet.isConnected()) {
 
-      let accountRegistred = await contract1.storageBalance()
+      let accountRegistred = await contract1.storageBalance();
 
       if(accountRegistred == null) {
-
-        let storageDepost = await contract1.storageDeposit()
+        qs("#afiPool #deposit").style.display = "block"
+        qs("#afiPool #activated").style.display = "none"
+      }
+      else{
+        qs("#afiPool #deposit").style.display = "none"
+        qs("#afiPool #activated").style.display = "block"
       }
 
       metaData = await tokenContractName1.ft_metadata();
-      console.log(metaData)
       tokenDecimals = metaData.decimals;
 
       var tokenNames = qsa("#afiPool .token-name");
@@ -1421,11 +1464,15 @@ async function refreshAccountInfo() {
       /*-------------------------/*
       /*** REF ***/
 
-      let accountRegistred2 = await contract2.storageBalance()
+      let accountRegistred2 = await contract2.storageBalance();
 
       if(accountRegistred2 == null) {
-
-        let storageDepost2 = await contract2.storageDeposit()
+        qs("#refPool #deposit").style.display = "block"
+        qs("#refPool #activated").style.display = "none"
+      }
+      else{
+        qs("#refPool #deposit").style.display = "none"
+        qs("#refPool #activated").style.display = "block"
       }
 
       var tokenNames2 = qsa("#refPool .token-name");
@@ -1482,6 +1529,18 @@ async function refreshAccountInfo() {
       * stNEAR
       ***********/
 
+
+      let accountRegistred3 = await contract3.storageBalance();
+
+      if(accountRegistred3 == null) {
+        qs("#stNEARPool #deposit").style.display = "block"
+        qs("#stNEARPool #activated").style.display = "none"
+      }
+      else{
+        qs("#stNEARPool #deposit").style.display = "none"
+        qs("#stNEARPool #activated").style.display = "block"
+      }
+
       var tokenNames3 = qsa("#stNEARPool .token-name");
 
       tokenNames3.forEach.call(tokenNames3, function(tokenNames3) {
@@ -1532,6 +1591,17 @@ async function refreshAccountInfo() {
 
 
       /*** Bananas ***/
+
+      let accountRegistred4 = await contract4.storageBalance();
+
+      if(accountRegistred4 == null) {
+        qs("#bananaPool #deposit").style.display = "block"
+        qs("#bananaPool #activated").style.display = "none"
+      }
+      else{
+        qs("#bananaPool #deposit").style.display = "none"
+        qs("#bananaPool #activated").style.display = "block"
+      }
 
       var tokenNames4 = qsa("#bananaPool .token-name");
 
@@ -1929,7 +1999,7 @@ window.onload = async function () {
             break;
           }
           default:
-            showSuccess(data.toString(), "Transaction Result")
+            showSuccess(data[0], "Transaction Result")
         }
       }
 
