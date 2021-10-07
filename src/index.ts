@@ -1243,7 +1243,7 @@ async function refreshRewardsDisplayLoop2() {
         if (staked2 != 0) {
           var rewards2 = (real_rewards_per_day2 * elapsed_ms2 / (1000 * 60 * 60 * 24));
           computed2 = (yton(previous_real2) + rewards2)
-          console.log(`date_now:${Date.now()}, round_timestamp:${previous_timestamp2}, rewards:${rewards2}, computed:${computed2}, previous_real:${yton(previous_real2)}, real_rewards_per_day2 :${real_rewards_per_day2}, elapsed_ms:${elapsed_ms2}`);
+          //console.log(`date_now:${Date.now()}, round_timestamp:${previous_timestamp2}, rewards:${rewards2}, computed:${computed2}, previous_real:${yton(previous_real2)}, real_rewards_per_day2 :${real_rewards_per_day2}, elapsed_ms:${elapsed_ms2}`);
           display_cheddar(computed2, "refPool");
         }
       }
@@ -1348,6 +1348,10 @@ async function refreshAccountInfo() {
     //show top-right-balance only if connected wallet
     //show(qs("#top-right-balance"), wallet.isConnected())
 
+
+    //update account & contract stats
+    if (wallet.isConnected()) {
+
     let walletAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
     //update shown wallet balance
     qsaInnerText("#afiPool #wallet-available span.near.balance", removeDecZeroes(walletAvailable));
@@ -1392,10 +1396,6 @@ async function refreshAccountInfo() {
     if (Number(walletAvailable4.replace(",", "")) > 1) {
       qs("#bananaPool #wallet-available a .max").style.display = "block";
     }
-
-
-    //update account & contract stats
-    if (wallet.isConnected()) {
 
       let accountRegistred = await contract1.storageBalance();
 
