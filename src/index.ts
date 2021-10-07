@@ -438,21 +438,21 @@ async function submitForm(action: string, form: any) {
 
       switch (form.id) {
         case "refPool": {
-          await contract2.unstake(toNumber(convertToBase(amount, metaData2.decimals)))
+          await contract2.unstake(convertToBase(amount, metaData2.decimals))
           break;
         }
         case "stNEARPool": {
-          await contract3.unstake(toNumber(convertToBase(amount, metaData3.decimals)))
+          await contract3.unstake(convertToBase(amount, metaData3.decimals))
           break;
         }
         case "bananaPool": {
           console.log(amount)
           console.log(convertToBase(amount, metaData4.decimals))
-          await contract4.unstake(toNumber(convertToBase(amount, metaData4.decimals)))
+          await contract4.unstake(convertToBase(amount, metaData4.decimals))
           break;
         }
         case "afiPool": {
-          await contract1.unstake(toNumber(convertToBase(amount, metaData.decimals)))
+          await contract1.unstake(convertToBase(amount, metaData.decimals))
           break;
         }
       }
@@ -570,24 +570,94 @@ qs('a#terms-of-use').onclick =
     showPopup("#terms.popup")
   }
 
-qs('#wallet-available a .max').onclick =
+  qs('#afiPool #wallet-available a .max').onclick =
   async function (event) {
     try {
       event.preventDefault()
       var amountAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
       //console.log()
-      qsi("#stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
+      qsi("#afiPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
     }
     catch (ex) {
       showErr(ex)
     }
   }
 
-qs('#near-balance a .max').onclick =
+  qs('#refPool #wallet-available a .max').onclick =
   async function (event) {
     try {
       event.preventDefault()
-      qsi("#stakeAmount").value = (yton(accountInfo[0])).toString()
+      var amountAvailable = convertToDecimals(await tokenContractName2.ft_balance_of(accName), metaData2.decimals)
+      //console.log()
+      qsi("#refPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+  qs('#stNEARPool #wallet-available a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      var amountAvailable = convertToDecimals(await tokenContractName3.ft_balance_of(accName), metaData3.decimals)
+      qsi("#stNEARPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+  qs('#bananaPool #wallet-available a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      var amountAvailable = convertToDecimals(await tokenContractName4.ft_balance_of(accName), metaData4.decimals)
+      qsi("#bananaPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+qs('#afiPool #near-balance a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      qsi("#afiPool #stakeAmount").value = convertToDecimals(accountInfo[0],metaData.decimals).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+qs('#refPool #near-balance a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      qsi("#refPool #stakeAmount").value = convertToDecimals(accountInfo2[0],metaData2.decimals).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+qs('#stNEARPool #near-balance a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      qsi("#stNEARPool #stakeAmount").value = convertToDecimals(accountInfo3[0],metaData3.decimals).toString()
+    }
+    catch (ex) {
+      showErr(ex)
+    }
+  }
+
+qs('#bananaPool #near-balance a .max').onclick =
+  async function (event) {
+    try {
+      event.preventDefault()
+      qsi("#bananaPool #stakeAmount").value = convertToDecimals(accountInfo4[0],metaData4.decimals).toString()
     }
     catch (ex) {
       showErr(ex)
@@ -1257,7 +1327,7 @@ async function refreshAccountInfo() {
     qsaInnerText("#refPool #wallet-available span.near.balance", removeDecZeroes(walletAvailable2));
 
     if (Number(walletAvailable2.replace(",", "")) > 1) {
-      qs("#wallet-available a .max").style.display = "block";
+      qs("#refPool #wallet-available a .max").style.display = "block";
     }
 
 
@@ -1269,7 +1339,7 @@ async function refreshAccountInfo() {
 
 
     if (Number(walletAvailable3.replace(",", "")) > 1) {
-      qs("#wallet-available a .max").style.display = "block";
+      qs("#stNEARPool #wallet-available a .max").style.display = "block";
     }
 
     let tokenBal4 = await tokenContractName4.ft_balance_of(accName);
@@ -1280,7 +1350,7 @@ async function refreshAccountInfo() {
 
 
     if (Number(walletAvailable4.replace(",", "")) > 1) {
-      qs("#wallet-available a .max").style.display = "block";
+      qs("#bananaPool #wallet-available a .max").style.display = "block";
     }
 
 
