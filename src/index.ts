@@ -1459,7 +1459,8 @@ async function refreshAccountInfo() {
 
       qs("#afi-pool-stats #total-staked").innerText = convertToDecimals(contractParams.total_staked,metaData.decimals,5) + " " + metaData.symbol.toUpperCase()
       qs("#afi-pool-stats #rewards-per-day").innerText = yton((contractParams.farming_rate * 60 * 24))
-      qs("#afi-pool-stats #total-rewards").innerText = (ytonFull(contractParams.total_farmed))
+      console.log(contractParams.total_farmed)
+      qs("#afi-pool-stats #total-rewards").innerText = (convertToDecimals(contractParams.total_farmed,24))
 
       /*-------------------------/*
       /*** REF ***/
@@ -1523,7 +1524,8 @@ async function refreshAccountInfo() {
 
       qs("#ref-pool-stats #total-staked").innerText = convertToDecimals(contractParams2.total_staked, metaData2.decimals,5) + " " + metaData2.symbol.toUpperCase()
       qs("#ref-pool-stats #rewards-per-day").innerText = yton((contractParams2.farming_rate * 60 * 24));
-      qs("#ref-pool-stats #total-rewards").innerText = (ytonFull(contractParams2.total_farmed))
+      console.log(contractParams2.total_farmed)
+      qs("#ref-pool-stats #total-rewards").innerText = (yton(contractParams2.total_farmed))
 
       /**********
       * stNEAR
@@ -1587,7 +1589,8 @@ async function refreshAccountInfo() {
 
       qs("#stnear-pool-stats #total-staked").innerText = convertToDecimals(contractParams3.total_staked,metaData3.decimals,5) + " " + metaData3.symbol.toUpperCase()
       qs("#stnear-pool-stats #rewards-per-day").innerText = yton((contractParams3.farming_rate * 60 * 24))
-      qs("#stnear-pool-stats #total-rewards").innerText = (ytonFull(contractParams3.total_farmed))
+      console.log(contractParams3.total_farmed)
+      qs("#stnear-pool-stats #total-rewards").innerText = (yton(contractParams3.total_farmed))
 
 
       /*** Bananas ***/
@@ -1649,7 +1652,8 @@ async function refreshAccountInfo() {
 
       qs("#banana-pool-stats #total-staked").innerText = convertToDecimals(contractParams4.total_staked,metaData4.decimals,5) + " " + metaData4.symbol.toUpperCase()
       qs("#banana-pool-stats #rewards-per-day").innerText = yton((contractParams4.farming_rate * 60 * 24))
-      qs("#banana-pool-stats #total-rewards").innerText = (ytonFull(contractParams4.total_farmed))
+      console.log(contractParams4.total_farmed)
+      qs("#banana-pool-stats #total-rewards").innerText = (yton(contractParams4.total_farmed))
 
 
     }
