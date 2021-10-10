@@ -53,89 +53,28 @@ let total_supply4: number;
 
 let contractParams: ContractParams = {
   owner_id: "",
-  token_contract: "cheddar.token",
+  token_contract: "",
   farming_rate: ntoy(10),
-  is_active: false,
+  is_active: true,
   farming_start: 0,
   farming_end: 0,
   total_farmed: "0",
   total_staked: "0"
 }
 
-let contractParams2: ContractParams = {
-  owner_id: "",
-  token_contract: "cheddar.token",
-  farming_rate: ntoy(10),
-  is_active: false,
-  farming_start: 0,
-  farming_end: 0,
-  total_farmed: "0",
-  total_staked: "0"
-}
+let contractParams2: ContractParams
 
-let contractParams3: ContractParams = {
-  owner_id: "",
-  token_contract: "cheddar.token",
-  farming_rate: ntoy(10),
-  is_active: false,
-  farming_start: 0,
-  farming_end: 0,
-  total_farmed: "0",
-  total_staked: "0"
-}
+let contractParams3: ContractParams
 
-let contractParams4: ContractParams = {
-  owner_id: "",
-  token_contract: "cheddar.token",
-  farming_rate: ntoy(10),
-  is_active: false,
-  farming_start: 0,
-  farming_end: 0,
-  total_farmed: "0",
-  total_staked: "0"
-}
+let contractParams4: ContractParams
 
-let metaData: TokenParams = {
-  decimals: "24",
-  icon: "",
-  name: "",
-  reference: "",
-  reference_hash: "",
-  spec: "",
-  symbol: "",
-}
+let metaData: TokenParams
 
-let metaData2: TokenParams = {
-  decimals: "24",
-  icon: "",
-  name: "",
-  reference: "",
-  reference_hash: "",
-  spec: "",
-  symbol: "",
-}
+let metaData2: TokenParams
 
+let metaData3: TokenParams
 
-let metaData3: TokenParams = {
-  decimals: "24",
-  icon: "",
-  name: "",
-  reference: "",
-  reference_hash: "",
-  spec: "",
-  symbol: "",
-}
-
-
-let metaData4: TokenParams = {
-  decimals: "24",
-  icon: "",
-  name: "",
-  reference: "",
-  reference_hash: "",
-  spec: "",
-  symbol: "",
-}
+let metaData4: TokenParams
 
 
 let nearWebWalletConnection: WalletConnection;
@@ -243,14 +182,14 @@ qs('#sign-out').onclick =
 
 
 //Stake button. Workaround for Safari emitter issue.
-qs('button#stake').onclick =
-  async function (event: Event) {
-    event.preventDefault()
-    var buttonId = 'button#' + (event.target as HTMLElement).id
-    var button = qs(buttonId) as HTMLButtonElement
+// qs('button#stake').onclick =
+//   async function (event: Event) {
+//     event.preventDefault()
+//     var buttonId = 'button#' + (event.target as HTMLElement).id
+//     var button = qs(buttonId) as HTMLButtonElement
 
-    submitForm((event.target as HTMLElement).id, button.form)
-  }
+//     submitForm((event.target as HTMLElement).id, button.form)
+//   }
 
 qs('button#stakeREF').onclick =
   async function (event: Event) {
@@ -280,14 +219,14 @@ qs('button#stakeBanana').onclick =
 }
 
 //UnStake button. Workaround for Safari emitter issue.
-qs('button#unstake').onclick =
-  async function (event: Event) {
-    event.preventDefault()
-    var buttonId = 'button#' + (event.target as HTMLElement).id
-    var button = qs(buttonId) as HTMLButtonElement
+// qs('button#unstake').onclick =
+//   async function (event: Event) {
+//     event.preventDefault()
+//     var buttonId = 'button#' + (event.target as HTMLElement).id
+//     var button = qs(buttonId) as HTMLButtonElement
 
-    submitForm((event.target as HTMLElement).id, button.form)
-  }
+//     submitForm((event.target as HTMLElement).id, button.form)
+//   }
 
 qs('button#unstakeREF').onclick =
   async function (event: Event) {
@@ -317,14 +256,14 @@ qs('button#unstakeBanana').onclick =
   }
 
 //Harvest button. Workaround for Safari emitter issue.
-qs('button#harvest').onclick =
-  async function (event) {
-    event.preventDefault()
-    var buttonId = 'button#' + (event.target as HTMLElement).id
-    var button = qs(buttonId) as HTMLButtonElement
-    //console.log(button)
-    submitForm((event.target as HTMLElement).id, button.form)
-  }
+// qs('button#harvest').onclick =
+//   async function (event) {
+//     event.preventDefault()
+//     var buttonId = 'button#' + (event.target as HTMLElement).id
+//     var button = qs(buttonId) as HTMLButtonElement
+//     //console.log(button)
+//     submitForm((event.target as HTMLElement).id, button.form)
+//   }
 
 qs('button#harvestREF').onclick =
   async function (event) {
@@ -353,15 +292,15 @@ qs('button#harvestBanana').onclick =
     submitForm((event.target as HTMLElement).id, button.form)
   }
 
-qs('#afiPool button.activate').onclick =
-  async function (event) {
-    event.preventDefault()
+// qs('#afiPool button.activate').onclick =
+//   async function (event) {
+//     event.preventDefault()
 
-    let storageDeposit = await contract1.storageDeposit();
-    qs('#afiPool #deposit').style.display = "none";
-    qs('#afiPool #activated').style.display = "block";
+//     let storageDeposit = await contract1.storageDeposit();
+//     qs('#afiPool #deposit').style.display = "none";
+//     qs('#afiPool #activated').style.display = "block";
 
-  }
+//   }
 
 qs('#refPool button.activate').onclick =
   async function (event) {
@@ -419,23 +358,25 @@ async function submitForm(action: string, form: any) {
 
     if (isStaking) {
 
-      if (amount < min_deposit_amount) throw Error(`Stake at least ${min_deposit_amount} NEAR`);
-
       // make a call to the smart contract
       switch (form.id) {
           case "refPool": {
+            if (amount < min_deposit_amount) throw Error(`Stake at least ${min_deposit_amount} ${metaData2.name}`);
             await tokenContractName2.ft_transfer_call("p2-ref.cheddar.testnet", convertToBase(stakeAmount.value, metaData2.decimals), "to farm")
             break;
           }
           case "stNEARPool": {
+            if (amount < min_deposit_amount) throw Error(`Stake at least ${min_deposit_amount} ${metaData2.name}`);
             await tokenContractName3.ft_transfer_call("p2-meta.cheddar.testnet", convertToBase(stakeAmount.value, metaData3.decimals), "to farm")
             break;
           }
           case "bananaPool": {
+            if (amount < min_deposit_amount) throw Error(`Stake at least ${min_deposit_amount} ${metaData2.name}`);
             await tokenContractName4.ft_transfer_call("p2-bananas.cheddar.testnet", convertToBase(stakeAmount.value, metaData4.decimals), "to farm")
             break;
           }
           case "afiPool": {
+            if (amount < min_deposit_amount) throw Error(`Stake at least ${min_deposit_amount} ${metaData2.name}`);
             await tokenContractName1.ft_transfer_call("p2-v1-tt.cheddar.testnet", convertToBase(stakeAmount.value, metaData.decimals), "to farm")
             break;
           }
@@ -604,24 +545,39 @@ async function stakeMaxClick(event: MouseEvent) {
   }
 }
 
-qs('a#terms-of-use').onclick =
+// qs('#afiPool a#terms-of-use').onclick =
+//   async function (event) {
+//     event.preventDefault()
+//     showPopup("#terms.popup")
+//   }
+qs('#refPool a#terms-of-use').onclick =
+  async function (event) {
+    event.preventDefault()
+    showPopup("#terms.popup")
+  }
+qs('#stNEARPool a#terms-of-use').onclick =
+  async function (event) {
+    event.preventDefault()
+    showPopup("#terms.popup")
+  }
+qs('#bananaPool a#terms-of-use').onclick =
   async function (event) {
     event.preventDefault()
     showPopup("#terms.popup")
   }
 
-  qs('#afiPool #wallet-available a .max').onclick =
-  async function (event) {
-    try {
-      event.preventDefault()
-      var amountAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
-      //console.log()
-      qsi("#afiPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
-    }
-    catch (ex) {
-      showErr(ex)
-    }
-  }
+  // qs('#afiPool #wallet-available a .max').onclick =
+  // async function (event) {
+  //   try {
+  //     event.preventDefault()
+  //     var amountAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
+  //     //console.log()
+  //     qsi("#afiPool #stakeAmount").value = parseInt(amountAvailable.replace(",", "")).toString()
+  //   }
+  //   catch (ex) {
+  //     showErr(ex)
+  //   }
+  // }
 
   qs('#refPool #wallet-available a .max').onclick =
   async function (event) {
@@ -660,16 +616,16 @@ qs('a#terms-of-use').onclick =
     }
   }
 
-qs('#afiPool #near-balance a .max').onclick =
-  async function (event) {
-    try {
-      event.preventDefault()
-      qsi("#afiPool #stakeAmount").value = convertToDecimals(accountInfo[0],metaData.decimals).toString()
-    }
-    catch (ex) {
-      showErr(ex)
-    }
-  }
+// qs('#afiPool #near-balance a .max').onclick =
+//   async function (event) {
+//     try {
+//       event.preventDefault()
+//       qsi("#afiPool #stakeAmount").value = convertToDecimals(accountInfo[0],metaData.decimals).toString()
+//     }
+//     catch (ex) {
+//       showErr(ex)
+//     }
+//   }
 
 qs('#refPool #near-balance a .max').onclick =
   async function (event) {
@@ -805,6 +761,7 @@ function checkMinUnstake(amountToUnstake: number) {
 //--------------------------------------
 // AutoRefresh
 async function autoRefresh() {
+  console.log("autoRefresh")
   if (wallet && wallet.isConnected()) {
     try {
       await refreshAccountInfo()
@@ -977,7 +934,7 @@ async function refreshRealRewardsLoop() {
 
   let unixTimestamp = new Date().getTime() / 1000; //unix timestamp (seconds)
   let isOpened = (contractParams.is_active && unixTimestamp >= contractParams.farming_start && unixTimestamp <= contractParams.farming_end);
-  
+  console.log(isOpened)
   try {
 
     if (isOpened && wallet.isConnected()) {
@@ -1020,7 +977,7 @@ async function refreshRealRewardsLoop() {
 
     let timeRemaining = 60;
 
-    if (isOpened && wallet.isConnected()) {
+    if (isOpened && wallet.isConnected() && real > 0) {
 
       let timePassed = (Date.now()-(unixTimestamp*1000))/1000
       timeRemaining = 61.3 - timePassed;
@@ -1036,6 +993,7 @@ async function refreshRealRewardsLoop2() {
 
   let unixTimestamp2 = new Date().getTime() / 1000; //unix timestamp (seconds)
   let isOpened2 = (contractParams2.is_active && unixTimestamp2 >= contractParams2.farming_start && unixTimestamp2 <= contractParams2.farming_end);
+  //console.log(isOpened2)
  
   try {
 
@@ -1062,7 +1020,7 @@ async function refreshRealRewardsLoop2() {
           let advanced2 = yton(real2) - yton(previous_real2)
           let elapsed_ms2 = now2 - previous_timestamp2
           real_rewards_per_day2 = (advanced2 * 60 * 24)
-          console.log(`advanced:${advanced2} real:${real2} prev-real:${previous_real2} rewards-per-day:${real_rewards_per_day2}  comp:${computed2} real-comp:${real2 - computed2} eslapsed-ms:${elapsed_ms2}`);
+          //console.log(`advanced:${advanced2} real:${real2} prev-real:${previous_real2} rewards-per-day:${real_rewards_per_day2}  comp:${computed2} real-comp:${real2 - computed2} eslapsed-ms:${elapsed_ms2}`);
           //console.log(`real-adv:${advanced2}, elapsed_ms:${elapsed_ms2}, real rew x week :${real_rewards_per_day2 * 7}`);
         }
       }
@@ -1081,7 +1039,7 @@ async function refreshRealRewardsLoop2() {
 
     let timeRemaining2 = 60;
 
-    if (isOpened2 && wallet.isConnected()) {
+    if (isOpened2 && wallet.isConnected() && real2 > 0) {
 
       let timePassed2 = (Date.now()-(unixTimestamp2*1000))/1000
       timeRemaining2 = 61.3 - timePassed2;
@@ -1097,13 +1055,13 @@ async function refreshRealRewardsLoop3() {
 
   let unixTimestamp3 = new Date().getTime() / 1000; //unix timestamp (seconds)
   let isOpened3 = (contractParams3.is_active && unixTimestamp3 >= contractParams3.farming_start && unixTimestamp3 <= contractParams3.farming_end);
-
+  //console.log(isOpened3)
   try {
 
     if (isOpened3 && wallet.isConnected()) {
 
       accountInfo3 = await contract3.status()
-      console.log(accountInfo3)
+      //console.log(accountInfo3)
       staked3 = accountInfo3[0];
       qsaInnerText("#stNEARPool #near-balance span.near.balance", convertToDecimals(staked3, metaData3.decimals,2))
       real3 = accountInfo3[1];
@@ -1131,6 +1089,7 @@ async function refreshRealRewardsLoop3() {
       if (yton(real3) > computed3 || (real3 > 0 && computed3 - yton(real3) > yton(real3) / 2)) { //if real is bigger or differ is >25%
         computed3 = real3
       }
+      //console.log(computed3)
       display_cheddar(computed3, "stNEARPool");
     }
   } catch (ex) {
@@ -1140,7 +1099,7 @@ async function refreshRealRewardsLoop3() {
 
     let timeRemaining3 = 60;
 
-    if (isOpened3 && wallet.isConnected()) {
+    if (isOpened3 && wallet.isConnected() && real3 > 0) {
 
       let timePassed3 = (Date.now()-(unixTimestamp3*1000))/1000
       timeRemaining3 = 61.3 - timePassed3;
@@ -1154,8 +1113,11 @@ async function refreshRealRewardsLoop3() {
 
 async function refreshRealRewardsLoop4() {
 
+
+  //console.log(contractParams4)
   let unixTimestamp4 = new Date().getTime() / 1000; //unix timestamp (seconds)
   let isOpened4 = (contractParams4.is_active && unixTimestamp4 >= contractParams4.farming_start && unixTimestamp4 <= contractParams4.farming_end);
+  //console.log(isOpened4)
 
   try {
 
@@ -1180,7 +1142,7 @@ async function refreshRealRewardsLoop4() {
           let advanced4 = yton(real4) - yton(previous_real4)
           let elapsed_ms4 = now4 - previous_timestamp4
           real_rewards_per_day4 = (advanced4 * 60 * 24)
-          console.log(`advanced:${advanced4} real:${real4} prev-real:${previous_real4} rewards-per-day:${real_rewards_per_day4}  comp:${computed4} real-comp:${real4 - computed4} eslapsed-ms:${elapsed_ms4}`);
+          //console.log(`advanced:${advanced4} real:${real4} prev-real:${previous_real4} rewards-per-day:${real_rewards_per_day4}  comp:${computed4} real-comp:${real4 - computed4} eslapsed-ms:${elapsed_ms4}`);
           //console.log(`real-adv:${advanced4}, elapsed_ms:${elapsed_ms4}, real rew x week :${real_rewards_per_day4 * 7}`);
         }
       }
@@ -1198,12 +1160,11 @@ async function refreshRealRewardsLoop4() {
 
     let timeRemaining4 = 60;
 
-    if (isOpened4 && wallet.isConnected()) {
+    if (isOpened4 && wallet.isConnected() && real4 > 0) {
 
       let timePassed4 = (Date.now()-(unixTimestamp4*1000))/1000
       timeRemaining4 = 61.3 - timePassed4;
       timeRemaining4 = (timeRemaining4 > 0) ? timeRemaining4 : timeRemaining4 + 2
-      //console.log(timeRemaining4)
     }
 
     setTimeout(refreshRealRewardsLoop4, timeRemaining4 * 1000) // every 60 secs
@@ -1267,6 +1228,7 @@ async function refreshRewardsDisplayLoop3() {
         if (staked3 != 0) {
           var rewards3 = (real_rewards_per_day3 * elapsed_ms3 / (1000 * 60 * 60 * 24));
           computed3 = (yton(previous_real3) + rewards3)
+          //console.log(computed3)
           //console.log(`date_now:${Date.now()}, round_timestamp:${previous_timestamp3}, rewards:${rewards3}, computed:${computed3}, previous_real:${yton(previous_real3)}, real_rewards_per_day :${real_rewards_per_day3}, elapsed_ms:${elapsed_ms3}`);
           display_cheddar(computed3, "stNEARPool");
         }
@@ -1312,17 +1274,38 @@ function display_cheddar(cheddar_amount: number, pool: string) {
 
   switch (pool) {
     case "refPool": {
-      qsaInnerText("#refPool #cheddar-balance", toStringDec(cheddar_amount));
+      var unixTimestamp = new Date().getTime() / 1000; //unix timestamp (seconds)
+      var isOpened = (contractParams2.is_active && unixTimestamp >= contractParams2.farming_start && unixTimestamp <= contractParams2.farming_end);
+      if (isOpened){
+        qsaInnerText("#refPool #cheddar-balance", toStringDecLong(cheddar_amount));
+      }
+      else {
+        qsaInnerText("#refPool #cheddar-balance", convertToDecimals(cheddar_amount, 24,4));
+      }
       cheddar_displayed2 = cheddar_amount;
       break;
     }
     case "stNEARPool": {
-      qsaInnerText("#stNEARPool #cheddar-balance", toStringDec(cheddar_amount));
+      var unixTimestamp = new Date().getTime() / 1000; //unix timestamp (seconds)
+      var isOpened = (contractParams2.is_active && unixTimestamp >= contractParams2.farming_start && unixTimestamp <= contractParams2.farming_end);
+      if (isOpened){
+        qsaInnerText("#stNEARPool #cheddar-balance", toStringDecLong(cheddar_amount));
+      }
+      else {
+        qsaInnerText("#stNEARPool #cheddar-balance", convertToDecimals(cheddar_amount, 24,4));
+      }
       cheddar_displayed3 = cheddar_amount;
       break;
     }
     case "bananaPool": {
-      qsaInnerText("#bananaPool #cheddar-balance", toStringDec(cheddar_amount));
+      var unixTimestamp = new Date().getTime() / 1000; //unix timestamp (seconds)
+      var isOpened = (contractParams4.is_active && unixTimestamp >= contractParams4.farming_start && unixTimestamp <= contractParams4.farming_end);
+      if (isOpened){
+        qsaInnerText("#bananaPool #cheddar-balance", toStringDecLong(cheddar_amount));
+      }
+      else {
+        qsaInnerText("#bananaPool #cheddar-balance", convertToDecimals(cheddar_amount, 24,4));
+      }
       cheddar_displayed4 = cheddar_amount;
       break;
     }
@@ -1336,6 +1319,9 @@ function display_cheddar(cheddar_amount: number, pool: string) {
 }
 
 async function refreshAccountInfo() {
+
+  console.log("refreshAccountInfo")
+
   try {
 
     accName = wallet.getAccountId();
@@ -1352,15 +1338,15 @@ async function refreshAccountInfo() {
     //update account & contract stats
     if (wallet.isConnected()) {
 
-    let walletAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
-    //update shown wallet balance
-    qsaInnerText("#afiPool #wallet-available span.near.balance", removeDecZeroes(walletAvailable));
-    qsaInnerText("span.bold.large.near#wallet-available", walletAvailable);
+    // let walletAvailable = toStringDec(yton(await tokenContractName1.ft_balance_of(accName)))
+    // //update shown wallet balance
+    // qsaInnerText("#afiPool #wallet-available span.near.balance", removeDecZeroes(walletAvailable));
+    // qsaInnerText("span.bold.large.near#wallet-available", walletAvailable);
 
 
-    if (Number(walletAvailable.replace(",", "")) > 1) {
-      qs("#wallet-available a .max").style.display = "block";
-    }
+    // if (Number(walletAvailable.replace(",", "")) > 1) {
+    //   qs("#wallet-available a .max").style.display = "block";
+    // }
 
 
     let tokenBal2 = await tokenContractName2.ft_balance_of(accName);
@@ -1397,70 +1383,70 @@ async function refreshAccountInfo() {
       qs("#bananaPool #wallet-available a .max").style.display = "block";
     }
 
-      let accountRegistred = await contract1.storageBalance();
+      // let accountRegistred = await contract1.storageBalance();
 
-      if(accountRegistred == null) {
-        qs("#afiPool #deposit").style.display = "block"
-        qs("#afiPool #activated").style.display = "none"
-      }
-      else{
-        qs("#afiPool #deposit").style.display = "none"
-        qs("#afiPool #activated").style.display = "block"
-      }
+      // if(accountRegistred == null) {
+      //   qs("#afiPool #deposit").style.display = "block"
+      //   qs("#afiPool #activated").style.display = "none"
+      // }
+      // else{
+      //   qs("#afiPool #deposit").style.display = "none"
+      //   qs("#afiPool #activated").style.display = "block"
+      // }
 
-      metaData = await tokenContractName1.ft_metadata();
-      tokenDecimals = metaData.decimals;
+      // metaData = await tokenContractName1.ft_metadata();
+      // tokenDecimals = metaData.decimals;
 
-      var tokenNames = qsa("#afiPool .token-name");
+      // var tokenNames = qsa("#afiPool .token-name");
 
 
-      tokenNames.forEach.call(tokenNames, function(tokenName) {
-        // do whatever
-         tokenName.innerText = metaData.symbol.toUpperCase();
-      });
+      // tokenNames.forEach.call(tokenNames, function(tokenName) {
+      //   // do whatever
+      //    tokenName.innerText = metaData.symbol.toUpperCase();
+      // });
 
-      accountInfo = await contract1.status(accName)
-      //console.log(accountInfo)
+      // accountInfo = await contract1.status(accName)
+      // //console.log(accountInfo)
 
-      contractParams = await contract1.get_contract_params()
-      total_supply = yton(await cheddarContractName1.ft_total_supply())
-      staked = accountInfo[0];
-      real = accountInfo[1];
+      // contractParams = await contract1.get_contract_params()
+      // total_supply = yton(await cheddarContractName1.ft_total_supply())
+      // staked = accountInfo[0];
+      // real = accountInfo[1];
 
-      var iconObj = qs("#afiPool #token-header img");
-      var iconVal = metaData.icon;
+      // var iconObj = qs("#afiPool #token-header img");
+      // var iconVal = metaData.icon;
 
-      if(iconObj != null) {
+      // if(iconObj != null) {
 
-        if(iconVal != null && iconVal.includes("data:image/svg+xml")) {
+      //   if(iconVal != null && iconVal.includes("data:image/svg+xml")) {
 
-          iconObj.src = metaData.icon;
+      //     iconObj.src = metaData.icon;
 
-        } else {
+      //   } else {
 
-          var iconImage = document.createElement('span');
-          iconImage.classList.add('icon');
-          iconImage.innerHTML = metaData.icon;
+      //     var iconImage = document.createElement('span');
+      //     iconImage.classList.add('icon');
+      //     iconImage.innerHTML = metaData.icon;
 
-          iconObj.parentNode.replaceChild(iconImage, iconObj);
+      //     iconObj.parentNode.replaceChild(iconImage, iconObj);
 
-        }
+      //   }
 
-      }
+      // }
 
-      qs("#afiPool #token-header span.name").innerText = metaData.name;
+      // qs("#afiPool #token-header span.name").innerText = metaData.name;
 
-      qs("#afiPool #farming_start").innerText = new Date(contractParams.farming_start * 1000).toLocaleString()
-      qs("#afiPool #farming_end").innerText = new Date(contractParams.farming_end * 1000).toLocaleString()
-      //console.log(contractParams)
+      // qs("#afiPool #farming_start").innerText = new Date(contractParams.farming_start * 1000).toLocaleString()
+      // qs("#afiPool #farming_end").innerText = new Date(contractParams.farming_end * 1000).toLocaleString()
+      // //console.log(contractParams)
 
-      //console.log(contractParams.total_staked)
-      total_staked = contractParams.total_staked;
+      // //console.log(contractParams.total_staked)
+      // total_staked = contractParams.total_staked;
 
-      qs("#afi-pool-stats #total-staked").innerText = convertToDecimals(contractParams.total_staked,metaData.decimals,5) + " " + metaData.symbol.toUpperCase()
-      qs("#afi-pool-stats #rewards-per-day").innerText = yton((contractParams.farming_rate * 60 * 24))
-      console.log(contractParams.total_farmed)
-      qs("#afi-pool-stats #total-rewards").innerText = (convertToDecimals(contractParams.total_farmed,24))
+      // qs("#afi-pool-stats #total-staked").innerText = convertToDecimals(contractParams.total_staked,metaData.decimals,5) + " " + metaData.symbol.toUpperCase()
+      // qs("#afi-pool-stats #rewards-per-day").innerText = yton((contractParams.farming_rate * 60 * 24))
+      // console.log(contractParams.total_farmed)
+      // qs("#afi-pool-stats #total-rewards").innerText = (convertToDecimals(contractParams.total_farmed,24))
 
       /*-------------------------/*
       /*** REF ***/
@@ -1489,6 +1475,7 @@ async function refreshAccountInfo() {
       //console.log(accountInfo2)
 
       contractParams2 = await contract2.get_contract_params()
+      //console.log(contractParams2)
       total_supply2 = yton(await cheddarContractName2.ft_total_supply())
       staked2 = accountInfo2[0];
       real2 = accountInfo2[1];
@@ -1524,7 +1511,7 @@ async function refreshAccountInfo() {
 
       qs("#ref-pool-stats #total-staked").innerText = convertToDecimals(contractParams2.total_staked, metaData2.decimals,5) + " " + metaData2.symbol.toUpperCase()
       qs("#ref-pool-stats #rewards-per-day").innerText = yton((contractParams2.farming_rate * 60 * 24));
-      console.log(contractParams2.total_farmed)
+      //console.log(contractParams2.total_farmed)
       qs("#ref-pool-stats #total-rewards").innerText = (yton(contractParams2.total_farmed))
 
       /**********
@@ -1557,6 +1544,7 @@ async function refreshAccountInfo() {
       total_supply3 = yton(await cheddarContractName3.ft_total_supply())
       staked3 = accountInfo3[0];
       real3 = accountInfo3[1];
+      //console.log(contractParams3)
 
       var iconObj3= qs("#stNEARPool #token-header img");
       var iconVal3 = metaData3.icon;
@@ -1589,7 +1577,7 @@ async function refreshAccountInfo() {
 
       qs("#stnear-pool-stats #total-staked").innerText = convertToDecimals(contractParams3.total_staked,metaData3.decimals,5) + " " + metaData3.symbol.toUpperCase()
       qs("#stnear-pool-stats #rewards-per-day").innerText = yton((contractParams3.farming_rate * 60 * 24))
-      console.log(contractParams3.total_farmed)
+      //console.log(contractParams3.total_farmed)
       qs("#stnear-pool-stats #total-rewards").innerText = (yton(contractParams3.total_farmed))
 
 
@@ -1652,7 +1640,7 @@ async function refreshAccountInfo() {
 
       qs("#banana-pool-stats #total-staked").innerText = convertToDecimals(contractParams4.total_staked,metaData4.decimals,5) + " " + metaData4.symbol.toUpperCase()
       qs("#banana-pool-stats #rewards-per-day").innerText = yton((contractParams4.farming_rate * 60 * 24))
-      console.log(contractParams4.total_farmed)
+      //console.log(contractParams4.total_farmed)
       qs("#banana-pool-stats #total-rewards").innerText = (yton(contractParams4.total_farmed))
 
 
@@ -1679,36 +1667,38 @@ async function refreshAccountInfo() {
       real4 = 0;
     }
 
-    let bigNStaked = BigInt((staked));
-    let farmingRate = BigInt(contractParams.farming_rate);
-    let total_stakedN = BigInt(total_staked);
     let minutesN = BigInt(60);
     let hoursN = BigInt(24);
-    // console.log(staked)
-    // console.log(bigNStaked)
-    // console.log(farmingRate)
-    // console.log(total_stakedN)
+
+    // let bigNStaked = BigInt((staked));
+    // let farmingRate = BigInt(contractParams.farming_rate);
+    // let total_stakedN = BigInt(total_staked);
+
+    // // console.log(staked)
+    // // console.log(bigNStaked)
+    // // console.log(farmingRate)
+    // // console.log(total_stakedN)
     
-    if(bigNStaked > 0 && total_staked > 0) {
-      real_rewards_per_day = yton( (farmingRate * minutesN * hoursN) / total_stakedN * bigNStaked).toString()
-    }
-    else {
-      real_rewards_per_day = yton(farmingRate * minutesN * hoursN).toString();
-    }
-    //console.log(real_rewards_per_day);
+    // if(bigNStaked > 0 && total_staked > 0) {
+    //   real_rewards_per_day = yton( (farmingRate * minutesN * hoursN) / total_stakedN * bigNStaked).toString()
+    // }
+    // else {
+    //   real_rewards_per_day = yton(farmingRate * minutesN * hoursN).toString();
+    // }
+    // //console.log(real_rewards_per_day);
 
-    qsaInnerText("#afiPool #near-balance span.near.balance", convertToDecimals(staked,tokenDecimals,2))
+    // qsaInnerText("#afiPool #near-balance span.near.balance", convertToDecimals(staked,tokenDecimals,2))
 
-    if (staked > 0) {
-      qs("#afiPool #near-balance a .max").style.display = "block";
-    }
+    // if (staked > 0) {
+    //   qs("#afiPool #near-balance a .max").style.display = "block";
+    // }
 
-    display_cheddar(real, "afiPool"); // display real rewards so they can harvest
-    computed = real;
-    previous_timestamp = Date.now();
-    previous_real = real;
+    // display_cheddar(real, "afiPool"); // display real rewards so they can harvest
+    // computed = real;
+    // previous_timestamp = Date.now();
+    // previous_real = real;
 
-    qsaInnerText("#afiPool #total-cheddar-tokens", toStringDec(total_supply))
+    // qsaInnerText("#afiPool #total-cheddar-tokens", toStringDec(total_supply))
 
     /* -------------------*/
     /*** REF ***/
@@ -1751,12 +1741,17 @@ async function refreshAccountInfo() {
     // console.log(farmingRate3)
     //console.log(total_staked3)
     if(bigNStaked3 > 0 && total_staked3 > 0 ) {
-      real_rewards_per_day3 = yton( (farmingRate3 * minutesN * hoursN) / total_staked3N * bigNStaked3).toString()
+      real_rewards_per_day3 = yton((farmingRate3 * minutesN * hoursN) / total_staked3N * bigNStaked3).toString()
+      if(real_rewards_per_day3 == 0){
+        real_rewards_per_day3 = yton(farmingRate3 * minutesN * hoursN).toString()
+      }
       //console.log(real_rewards_per_day3)
     }
     else {
       real_rewards_per_day3 = yton( (farmingRate3 * minutesN * hoursN)).toString()
     }
+
+
     ////console.log(real_rewards_per_day);
 
     qsaInnerText("#stNEARPool #near-balance span.near.balance", (convertToDecimals(staked3,metaData3.decimals,2)))
@@ -1857,6 +1852,7 @@ function narwalletDisconnected(ev: CustomEvent) {
 }
 
 window.onload = async function () {
+
   try {
 
     let env = "testnet" //default
@@ -1926,18 +1922,7 @@ window.onload = async function () {
     narwallets.setNetwork(nearConfig.farms[0].networkId); //tell the wallet which network we want to operate on
     addNarwalletsListeners(narwalletConnected, narwalletDisconnected) //listen to narwallets events
 
-    //set-up auto-refresh loop (10 min)
-    autoRefresh()
-    //set-up auto-refresh rewards *display* (5 times/sec)
-    refreshRewardsDisplayLoop()
-    refreshRewardsDisplayLoop2()
-    refreshRewardsDisplayLoop3()
-    refreshRewardsDisplayLoop4()
-    //set-up auto-adjust rewards *display* to real rewards (once a minute)
-    refreshRealRewardsLoop()
-    refreshRealRewardsLoop2()
-    refreshRealRewardsLoop3()
-    refreshRealRewardsLoop4()
+
 
     //check if signed-in with NEAR Web Wallet
     await initNearWebWalletConnection()
@@ -1965,10 +1950,24 @@ window.onload = async function () {
 
       await signedInFlow()
 
+      //set-up auto-refresh loop (10 min)
+      autoRefresh()
+      //set-up auto-refresh rewards *display* (5 times/sec)
+      //refreshRewardsDisplayLoop()
+      refreshRewardsDisplayLoop2()
+      refreshRewardsDisplayLoop3()
+      refreshRewardsDisplayLoop4()
+      //set-up auto-adjust rewards *display* to real rewards (once a minute)
+      //refreshRealRewardsLoop()
+      refreshRealRewardsLoop2()
+      refreshRealRewardsLoop3()
+      refreshRealRewardsLoop4()
+
       //check if we're re-spawning after a wallet-redirect
       //show transaction result depending on method called
       const { err, data, method } = await checkRedirectSearchParams(nearWebWalletConnection, nearConfig.farms[0].explorerUrl || "explorer");
-
+      console.log(data)
+      console.log(method)
       if (err) {
         showError(err, "Transaction - " + method || "");
       }
@@ -1995,11 +1994,11 @@ window.onload = async function () {
             break;
           }
           case "unstake": {
-            showSuccess(`Unstaked ${yton(data)} NEAR`)
+            showSuccess(`Unstaked ${yton(data)}`)
             break;
           }
-          case "stake": {
-            showSuccess(`Total Staked ${yton(data)} NEAR`)
+          case "ft_transfer_call": {
+            showSuccess(`Total Staked ${yton(data)}`)
             break;
           }
           default:

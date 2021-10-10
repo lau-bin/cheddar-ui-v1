@@ -50,7 +50,7 @@ export async function checkRedirectSearchParams( walletConnection:WalletConnecti
 
     const decodedTxHash = utils.serialize.base_decode(txHash)
     const finalExecOutcome = await walletConnection.account().connection.provider.txStatus( decodedTxHash, walletConnection.getAccountId());
-
+    console.log(finalExecOutcome)
     let method:string|undefined = undefined;
     if (finalExecOutcome.transaction?.actions?.length){
       const actions=finalExecOutcome.transaction.actions
