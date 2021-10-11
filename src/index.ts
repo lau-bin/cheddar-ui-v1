@@ -1080,7 +1080,7 @@ async function refreshRealRewardsLoop3() {
           let advanced3 = yton(real3) - yton(previous_real3)
           let elapsed_ms3 = now3 - previous_timestamp3
           real_rewards_per_day3 = (advanced3 * 60 * 24)
-          //console.log(`now: ${now3}, previous_timestamp: ${previous_timestamp3}, advanced:${advanced3} real:${real3} prev-real:${previous_real3} rewards-per-day:${real_rewards_per_day3}  comp:${computed3} real-comp:${real3 - computed3} eslapsed-ms:${elapsed_ms3}`);
+          console.log(`now: ${now3}, previous_timestamp: ${previous_timestamp3}, advanced:${advanced3} real:${real3} prev-real:${previous_real3} rewards-per-day:${real_rewards_per_day3}  comp:${computed3} real-comp:${real3 - computed3} eslapsed-ms:${elapsed_ms3}`);
           //console.log(`real-adv:${advanced3}, elapsed_ms:${elapsed_ms3}, real rew x week :${real_rewards_per_day3 * 7}`);
         }
       }
@@ -1534,7 +1534,7 @@ async function refreshAccountInfo() {
 
       tokenNames3.forEach.call(tokenNames3, function(tokenNames3) {
         // do whatever
-         tokenNames3.innerText = metaData3.symbol.toUpperCase();
+         tokenNames3.innerText = "stNEAR";
       });
 
       accountInfo3 = await contract3.status(accName)
@@ -1575,7 +1575,7 @@ async function refreshAccountInfo() {
 
       total_staked3 = contractParams3.total_staked;
 
-      qs("#stnear-pool-stats #total-staked").innerText = convertToDecimals(contractParams3.total_staked,metaData3.decimals,5) + " " + metaData3.symbol.toUpperCase()
+      qs("#stnear-pool-stats #total-staked").innerText = convertToDecimals(contractParams3.total_staked,metaData3.decimals,5) + "stNEAR"
       qs("#stnear-pool-stats #rewards-per-day").innerText = yton((contractParams3.farming_rate * 60 * 24))
       //console.log(contractParams3.total_farmed)
       qs("#stnear-pool-stats #total-rewards").innerText = (yton(contractParams3.total_farmed))
@@ -1965,19 +1965,43 @@ window.onload = async function () {
 
       //check if we're re-spawning after a wallet-redirect
       //show transaction result depending on method called
-      const { err, data, method } = await checkRedirectSearchParams(nearWebWalletConnection, nearConfig.farms[0].explorerUrl || "explorer");
-      console.log(data)
-      console.log(method)
+      const { err, data, method, finalExecutionOutcome } = await checkRedirectSearchParams(nearWebWalletConnection, nearConfig.farms[0].explorerUrl || "explorer");
+      
+      if(finalExecutionOutcome)
+        var args = JSON.parse(atob(finalExecutionOutcome.transaction.actions[0].FunctionCall.args))
+
       if (err) {
         showError(err, "Transaction - " + method || "");
       }
       else if (method == "deposit_and_stake") {
         showSuccess("Deposit Successful")
       }
+
       if (method == "unstake" && data == null) {
         showSuccess("Unstaked All and Harvested Cheddar")
       }
+      else if (method == "unstake" && args.amount != null) {
+        console.log("unstake")
+        var receiver = finalExecutionOutcome.transaction.receiver_id;
+        if(receiver) {
+          switch (receiver) {
+            case "p2-bananas.cheddar.testnet": {
+              showSuccess(`Unstaked ${convertToDecimals(args.amount, metaData4.decimals, 2)} ${metaData4.symbol}`)
+              break;
+            }
+            case "p2-ref.cheddar.testnet": {
+              showSuccess(`Untaked ${convertToDecimals(args.amount, metaData2.decimals, 2)} ${metaData2.symbol}`)
+              break;
+            }
+            case "p2-meta.cheddar.testnet": {
+              showSuccess(`Untaked ${convertToDecimals(args.amount, metaData3.decimals, 2)} ${metaData3.symbol}`)
+              break;
+            }
+          }
+        }
+      }
       else if (data) {
+        console.log(data)
         switch (method) {
           case "liquid_unstake": {
             showSection("#unstake")
@@ -1994,11 +2018,43 @@ window.onload = async function () {
             break;
           }
           case "unstake": {
-            showSuccess(`Unstaked ${yton(data)}`)
+            var receiver = finalExecutionOutcome.transaction.receiver_id;
+            if(receiver) {
+              switch (receiver) {
+                case "berryclub.testnet": {
+                  showSuccess(`Unstaked ${convertToDecimals(data, metaData4.decimals, 2)} ${metaData4.symbol}`)
+                  break;
+                }
+                case "ref.fakes.testnet": {
+                  showSuccess(`Untaked ${convertToDecimals(data, metaData2.decimals, 2)} ${metaData2.symbol}`)
+                  break;
+                }
+                case "meta-v2.pool.testnet": {
+                  showSuccess(`Untaked ${convertToDecimals(data, metaData3.decimals, 2)} ${metaData3.symbol}`)
+                  break;
+                }
+              }
+            }
             break;
           }
           case "ft_transfer_call": {
-            showSuccess(`Total Staked ${yton(data)}`)
+            var receiver = finalExecutionOutcome.transaction.receiver_id;
+            if(receiver) {
+              switch (receiver) {
+                case "berryclub.testnet": {
+                  showSuccess(`Staked ${convertToDecimals(data, metaData4.decimals, 2)} ${metaData4.symbol}`)
+                  break;
+                }
+                case "ref.fakes.testnet": {
+                  showSuccess(`Staked ${convertToDecimals(data, metaData2.decimals, 2)} ${metaData2.symbol}`)
+                  break;
+                }
+                case "meta-v2.pool.testnet": {
+                  showSuccess(`Staked ${convertToDecimals(data, metaData3.decimals, 2)} ${metaData3.symbol}`)
+                  break;
+                }
+              }
+            }
             break;
           }
           default:
