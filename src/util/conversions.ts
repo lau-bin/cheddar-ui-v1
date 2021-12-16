@@ -23,7 +23,7 @@ export function ntoy(near: number): string {
  * returns Near number with 5 decimal digits
  * @param {string} yoctoNEAR amount 
  */
-export function yton(yoctos: string): number {
+export function yton(yoctos: number | string | bigint): number {
   try {
     if (yoctos == undefined) return 0;
     const decimals = 5
@@ -61,14 +61,14 @@ export function ytonFull(yoctoString: string): string {
 *   Example:
 *   convertToDecimals("12345678", 1, 1) = 123.4
 */ 
-export function convertToDecimals(str:string, decimals:string, truncate:number) {
-  str = str.toString() // convert numbers and bigint
+export function convertToDecimals(_str:number | string, decimals:string | number, truncate?:number) {
+  let str = _str.toString() // convert numbers and bigint
   // clear leading zeros
   let i = 0
   for(; i<str.length && str[i]=="0"; ++i) {}
   if (i != 0)
     str = str.substring(i);
-  if (str == 0 || str == "0")
+  if (str == "0")
     return "0";
 
   let decimals_n = Number(decimals);
@@ -89,7 +89,7 @@ export function convertToDecimals(str:string, decimals:string, truncate:number) 
   if (truncate == undefined) {
     return integer + "." + fractional;
   }
-  else if(fractional > 0) {
+  else if(Number.parseFloat(fractional) > 0) {
     return integer + "." + fractional.substring(0, truncate);
   }
   return integer;
@@ -104,8 +104,9 @@ export function convertToDecimals(str:string, decimals:string, truncate:number) 
 *   convertToBase("1.2345", 3) = "1234"
 * convertToBase("0.12345", 3) = "123"
 */ 
-export function convertToBase(n:string, decimals:string) {
-  let decimals_n = Number(decimals);
+export function convertToBase(_n: string | number, _decimals: string | number) {
+  let n = String(_n)
+  let decimals_n, decimals = Number(_decimals);
   // clear leading zeros
   let i = 0
   for(; i<n.length && n[i]=="0"; ++i) {}

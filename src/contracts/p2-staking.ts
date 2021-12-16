@@ -21,13 +21,13 @@ export class StakingPoolP1 extends SmartContract {
     }
 
     /// Returns amount of staked NEAR and farmed CHEDDAR of given account.
-    status(accountId?: AccountId): Promise<[U128String, U128String]> {
-        return this.view("status", { account_id: accountId || this.wallet.getAccountId() })
+    status(accountId?: AccountId): Promise<U128String> {
+        return this.view("status", { account_id: accountId || this.walletProvider.wallet.getAccountId() })
     }
 
     /// Checks to see if an account is registered.
     storageBalance(accountId?: AccountId): Promise<[U128String, U128String]> {
-        return this.view("storage_balance_of", { account_id: accountId || this.wallet.getAccountId() })
+        return this.view("storage_balance_of", { account_id: accountId || this.walletProvider.wallet.getAccountId() })
     }
 
     /// Registers a user with the farm.
@@ -35,16 +35,12 @@ export class StakingPoolP1 extends SmartContract {
         return this.call("storage_deposit", {}, TGas(25), "50000000000000000000000")
     }
 
-    /// Stake attached &NEAR and returns total amount of stake.
-    stake(amount: number): Promise<U128String> {
-        return this.call("stake", {}, TGas(25), amount)
-    }
 
     /// Unstakes given amount of $NEAR and transfers it back to the user.
     /// Returns amount of staked tokens left after the call.
     /// Panics if the caller doesn't stake anything or if he doesn't have enough staked tokens.
     /// Requires 1 yNEAR payment for wallet validation.
-    unstake(amount: number): Promise<void> {
+    unstake(amount: string): Promise<void> {
         return this.call("unstake", { amount: amount }, TGas(125), "1")
     }
 
@@ -55,10 +51,6 @@ export class StakingPoolP1 extends SmartContract {
     /// Requires 1 yNEAR payment for wallet validation.
     close(): Promise<void> {
         return this.call("close", {}, TGas(75), "1")
-    }
-
-    withdraw_crop(): Promise<void> {
-        return this.call("withdraw_crop", {}, TGas(125))
     }
 
 }

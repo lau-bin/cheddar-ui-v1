@@ -1,16 +1,37 @@
+import { FungibleTokenMetadata, NEP141Trait } from "./NEP141";
+import { StakingPoolP1 } from "./p2-staking";
+
 type U128String = string;
 
 
 //JSON compatible struct returned from get_contract_state
-export type ContractParams = {
+export interface ContractParams {
     owner_id: string,
     token_contract: string,
-    farming_rate: string, //yoctoCheddar per day per NEAR
     is_active: boolean,
-    farming_start: number, //unix timestamp
-    farming_end: number, //unix timestamp
-    total_farmed: string, //yoctoCheddar
     total_staked: string, //yoctoNEAR
+    closing_date: string
+}
+export type TokenData = {
+    contract: StakingPoolP1,
+    tokenContractName: NEP141Trait,
+    accountInfo: string,
+    contractParams: ContractParams,
+    metaData?: FungibleTokenMetadata,
+    totalStakedLocal?: bigint
+}
+export function defaultContractData(){
+    return {
+        accountInfo: "",
+        contractParams: {
+            owner_id: "",
+            token_contract: "",
+            is_active: false,
+            closing_date: "",
+            total_staked: "0"
+        }
+    }
+
 }
 
 export type TokenParams = {

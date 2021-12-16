@@ -74,8 +74,9 @@ export function showError(msg:string,title?:string){
     title = (msg == "Error from wallet: userRejected") ? "Transaction Rejected" : title
     showPopup("#error-box",msg,title);
 }
-export function showErr(ex:Error){
+export function showErr(ex: unknown){
     console.log(ex)
+    if (ex instanceof Error)
     showError(ex.message);
 }
 
